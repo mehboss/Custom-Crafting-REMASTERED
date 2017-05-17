@@ -264,7 +264,14 @@ public class Main extends JavaPlugin implements Listener {
 												System.out.println(displayname.get(1));
 												System.out.println(displayname.get(2));
 												itemmatches = false;
+												break;
 											}
+										}
+									} else {
+										if (displayname.get(j).equals("false") && inv.getItem(j).hasItemMeta()
+												&& inv.getItem(j).getItemMeta().hasDisplayName()) {
+											itemmatches = false;
+											break;
 										}
 									}
 								}
