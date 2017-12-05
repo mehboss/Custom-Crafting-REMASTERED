@@ -135,19 +135,14 @@ public class Main extends JavaPlugin implements Listener {
 			}
 			if (rrec == true) {
 
-				Bukkit.broadcastMessage("yes");
-
 				boolean itemmatches = true;
 
 				if (Item.hasItemMeta() && Item.getItemMeta().hasDisplayName()) {
 
-					Bukkit.broadcastMessage("yee");
-
 					for (String name : config.getConfig().getConfigurationSection("Items").getKeys(false)) {
 
 						String I = config.getConfig().getString("Items." + name + ".Name");
-
-						Bukkit.broadcastMessage("yep");
+						
 						if (ChatColor.translateAlternateColorCodes('&', I)
 								.equals(Item.getItemMeta().getDisplayName())) {
 
@@ -155,21 +150,13 @@ public class Main extends JavaPlugin implements Listener {
 
 								String[] newsplit = In.split(":");
 
-								System.out.println(newsplit);
-
 								if (newsplit.length == 2) {
 									matches.put(newsplit[0], "false");
-									System.out.println("one");
+									
 								} else if (newsplit.length == 3) {
 									matches.put(newsplit[0], newsplit[2]);
 								}
 							}
-
-							System.out.print("---------------------------");
-							for (String matchess : matches.values()) {
-								System.out.print(matchess);
-							}
-							System.out.print("---------------------------");
 
 							List<String> r = config.getConfig().getStringList("Items." + name + ".ItemCrafting");
 
@@ -240,29 +227,16 @@ public class Main extends JavaPlugin implements Listener {
 								}
 							}
 
-							Bukkit.broadcastMessage("bob");
-
-							for (String displaynamee : displayname.values()) {
-								System.out.print(displaynamee);
-							}
-
 							for (int j = 0; j < 9; j++) {
 
 								if (inv.getItem(j) != null && inv.getItem(j).getType() != null) {
-									Bukkit.broadcastMessage("true1");
 
 									if (!(displayname.get(j).equals("false"))) {
-										Bukkit.broadcastMessage("true2");
 										if (inv.getItem(j).hasItemMeta()
 												&& inv.getItem(j).getItemMeta().hasDisplayName()) {
-											Bukkit.broadcastMessage("true3");
 
 											if (!(inv.getItem(j).getItemMeta().getDisplayName().equals(
 													ChatColor.translateAlternateColorCodes('&', displayname.get(j))))) {
-												Bukkit.broadcastMessage("true4");
-												System.out.println(j);
-												System.out.println(displayname.get(1));
-												System.out.println(displayname.get(2));
 												itemmatches = false;
 												break;
 											}
