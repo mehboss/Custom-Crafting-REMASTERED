@@ -24,7 +24,6 @@ public class Main extends JavaPlugin implements Listener {
 	ShapedRecipe R = null;
 
 	public HashMap<String, String> matches = new HashMap<String, String>();
-	public HashMap<Integer, String> displayname = new HashMap<Integer, String>();
 	public ArrayList<ShapedRecipe> recipe = new ArrayList<ShapedRecipe>();
 
 	public void onEnable() {
@@ -48,7 +47,15 @@ public class Main extends JavaPlugin implements Listener {
 			int type = config.getConfig().getInt("Items." + item + ".Item");
 			int amount = config.getConfig().getInt("Items." + item + ".Amount");
 
-			i = new ItemStack(Material.getMaterial(type), amount);
+			String damage = config.getConfig().getString("Items." + item + ".Item-Damage");
+
+			if (damage.equalsIgnoreCase("none")) {
+				i = new ItemStack(Material.getMaterial(type), amount);
+				
+			} else {
+				i = new ItemStack(Material.getMaterial(type), amount, Short.valueOf(damage));
+			}
+
 			ItemMeta m = i.getItemMeta();
 
 			m.setDisplayName(ChatColor.translateAlternateColorCodes('&',
@@ -110,14 +117,25 @@ public class Main extends JavaPlugin implements Listener {
 		}
 	}
 
+	ShapedRecipe ItemRecipe = null;
 	ItemStack Item = null;
 
 	@EventHandler
 	public void check(PrepareItemCraftEvent e) {
 
-		CraftingInventory inv = e.getInventory();
+		String letterSlot1 = "";
+		String letterSlot2 = "";
+		String letterSlot3 = "";
+		String letterSlot4 = "";
+		String letterSlot5 = "";
+		String letterSlot6 = "";
+		String letterSlot7 = "";
+		String letterSlot8 = "";
+		String letterSlot9 = "";
 
-		Boolean rrec = false;
+		CraftingInventory inv = e.getInventory();
+		Boolean recipematches = false;
+		Boolean recipeMatches = false;
 
 		Plugin config = Bukkit.getPluginManager().getPlugin("CustomRecipes");
 
@@ -126,145 +144,257 @@ public class Main extends JavaPlugin implements Listener {
 			for (ShapedRecipe newrecipe : recipe) {
 				if (inv.getResult().equals(newrecipe.getResult())) {
 
+					ItemRecipe = newrecipe;
 					Item = newrecipe.getResult();
-					rrec = true;
+
+					recipematches = true;
 
 					inv.setResult(new ItemStack(Material.AIR));
 					break;
 				}
 			}
-			if (rrec == true) {
+			if (recipematches == true) {
 
-				boolean itemmatches = true;
+				matches.put("X", "false");
 
-				if (Item.hasItemMeta() && Item.getItemMeta().hasDisplayName()) {
+				for (String name : config.getConfig().getConfigurationSection("Items").getKeys(false)) {
 
-					for (String name : config.getConfig().getConfigurationSection("Items").getKeys(false)) {
+					String I = config.getConfig().getString("Items." + name + ".Name");
 
-						String I = config.getConfig().getString("Items." + name + ".Name");
-						
-						if (ChatColor.translateAlternateColorCodes('&', I)
-								.equals(Item.getItemMeta().getDisplayName())) {
+					if (ChatColor.translateAlternateColorCodes('&', I).equals(Item.getItemMeta().getDisplayName())) {
 
-							for (String In : config.getConfig().getStringList("Items." + name + ".Ingredients")) {
+						for (String In : config.getConfig().getStringList("Items." + name + ".Ingredients")) {
 
-								String[] newsplit = In.split(":");
+							String[] newsplit = In.split(":");
 
-								if (newsplit.length == 2) {
-									matches.put(newsplit[0], "false");
-									
-								} else if (newsplit.length == 3) {
-									matches.put(newsplit[0], newsplit[2]);
+							if (newsplit.length == 2) {
+								matches.put(newsplit[0], "false");
+
+							} else if (newsplit.length == 3) {
+								matches.put(newsplit[0], newsplit[2]);
+							}
+						}
+
+						List<String> r = config.getConfig().getStringList("Items." + name + ".ItemCrafting");
+
+						String row1 = r.get(0);
+						String row2 = r.get(1);
+						String row3 = r.get(2);
+
+						// loops 3 times for all crafting rows
+
+						for (int j = 1; j < 10; j++) {
+							String[] newsplit1 = row1.split("");
+							String[] newsplit2 = row2.split("");
+							String[] newsplit3 = row3.split("");
+
+							if (j == 1) {
+								if (inv.getItem(j) == null || inv.getItem(j).getType() == null) {
+									letterSlot1 = "false";
+
+								} else {
+									String slot1 = newsplit1[0];
+									letterSlot1 = matches.get(slot1); // slot 1
+
 								}
 							}
+							if (j == 2) {
 
-							List<String> r = config.getConfig().getStringList("Items." + name + ".ItemCrafting");
-
-							String row1 = r.get(0);
-							String row2 = r.get(1);
-							String row3 = r.get(2);
-
-							// loops 3 times for all crafting rows
-
-							String letter = null;
-
-							for (int j = 0; j < 9; j++) {
-
-								String[] newsplit1 = row1.split("");
-								String[] newsplit2 = row2.split("");
-								String[] newsplit3 = row3.split("");
-
-								if (j == 0) {
-									String slot1 = newsplit1[0];
-									letter = matches.get(slot1); // slot 1
-
-								} else if (j == 1) {
+								if (inv.getItem(j) == null || inv.getItem(j).getType() == null) {
+									letterSlot2 = "false";
+								} else {
 
 									String slot2 = newsplit1[1];
-									letter = matches.get(slot2); // slot 1
+									letterSlot2 = matches.get(slot2); // slot 2
+								}
+							}
+							if (j == 3) {
 
-								} else if (j == 2) {
+								if (inv.getItem(j) == null || inv.getItem(j).getType() == null) {
+									letterSlot3 = "false";
+								} else {
 
 									String slot3 = newsplit1[2];
-									letter = matches.get(slot3); // slot 1
+									letterSlot3 = matches.get(slot3); // slot 3
+								}
+							}
+							if (j == 4) {
 
-								} else if (j == 3) {
+								if (inv.getItem(j) == null || inv.getItem(j).getType() == null) {
+									letterSlot4 = "false";
+								} else {
 
 									String slot4 = newsplit2[0];
-									letter = matches.get(slot4); // slot 1
+									letterSlot4 = matches.get(slot4);
+								}
+							}
+							if (j == 5) {
 
-								} else if (j == 4) {
+								if (inv.getItem(j) == null || inv.getItem(j).getType() == null) {
+									letterSlot5 = "false";
+								} else {
 
 									String slot5 = newsplit2[1];
-									letter = matches.get(slot5); // slot 1
+									letterSlot5 = matches.get(slot5);
+								}
+							}
+							if (j == 6) {
 
-								} else if (j == 5) {
+								if (inv.getItem(j) == null || inv.getItem(j).getType() == null) {
+									letterSlot6 = "false";
+								} else {
 
 									String slot6 = newsplit2[2];
-									letter = matches.get(slot6); // slot 1
+									letterSlot6 = matches.get(slot6); // slot 6
+								}
+							}
+							if (j == 7) {
 
-								} else if (j == 6) {
+								if (inv.getItem(j) == null || inv.getItem(j).getType() == null) {
+									letterSlot7 = "false";
+								} else {
 
 									String slot7 = newsplit3[0];
-									letter = matches.get(slot7); // slot 1
+									letterSlot7 = matches.get(slot7); // slot 7
 
-								} else if (j == 7) {
+								}
+							}
+							if (j == 8) {
+
+								if (inv.getItem(j) == null || inv.getItem(j).getType() == null) {
+									letterSlot8 = "false";
+								} else {
 
 									String slot8 = newsplit3[1];
-									letter = matches.get(slot8); // slot 1
+									letterSlot8 = matches.get(slot8); // slot 8
+								}
+							}
+							if (j == 9) {
 
-								} else if (j == 8) {
+								if (inv.getItem(j) == null || inv.getItem(j).getType() == null) {
+									letterSlot9 = "false";
+								} else {
 
 									String slot9 = newsplit3[2];
-									letter = matches.get(slot9); // slot 1
-
-								}
-
-								if (letter != null) {
-									displayname.put(j, letter);
-								} else {
-									displayname.put(j, "false");
+									letterSlot9 = matches.get(slot9); // slot 9
 								}
 							}
-
-							for (int j = 0; j < 9; j++) {
-
-								if (inv.getItem(j) != null && inv.getItem(j).getType() != null) {
-
-									if (!(displayname.get(j).equals("false"))) {
-										if (inv.getItem(j).hasItemMeta()
-												&& inv.getItem(j).getItemMeta().hasDisplayName()) {
-
-											if (!(inv.getItem(j).getItemMeta().getDisplayName().equals(
-													ChatColor.translateAlternateColorCodes('&', displayname.get(j))))) {
-												itemmatches = false;
-												break;
-											}
-										}
-									} else {
-										if (displayname.get(j).equals("false") && inv.getItem(j).hasItemMeta()
-												&& inv.getItem(j).getItemMeta().hasDisplayName()) {
-											itemmatches = false;
-											break;
-										}
-									}
-								}
-							}
-
-							displayname.clear();
-							matches.clear();
-
-							if (itemmatches == true) {
-								inv.setResult(new ItemStack(Item));
-
-							} else {
-								inv.setResult(new ItemStack(Material.AIR));
-							}
-
-							Item = null;
 						}
 					}
 				}
+
+				String invSlot1 = "";
+				String invSlot2 = "";
+				String invSlot3 = "";
+				String invSlot4 = "";
+				String invSlot5 = "";
+				String invSlot6 = "";
+				String invSlot7 = "";
+				String invSlot8 = "";
+				String invSlot9 = "";
+
+				for (int j = 1; j < 10; j++) {
+
+					if (j == 1) {
+
+						if (inv.getItem(j) == null || inv.getItem(j).getType() == null
+								|| !inv.getItem(j).getItemMeta().hasDisplayName()) {
+							invSlot1 = "false";
+						} else {
+							invSlot1 = inv.getItem(j).getItemMeta().getDisplayName();
+						}
+					}
+
+					if (j == 2) {
+						if (inv.getItem(j) == null || inv.getItem(j).getType() == null
+								|| !inv.getItem(j).getItemMeta().hasDisplayName()) {
+							invSlot2 = "false";
+						} else {
+							invSlot2 = inv.getItem(j).getItemMeta().getDisplayName();
+						}
+					}
+
+					if (j == 3) {
+						if (inv.getItem(j) == null || inv.getItem(j).getType() == null
+								|| !inv.getItem(j).getItemMeta().hasDisplayName()) {
+							invSlot3 = "false";
+						} else {
+							invSlot3 = inv.getItem(j).getItemMeta().getDisplayName();
+						}
+					}
+
+					if (j == 4) {
+						if (inv.getItem(j) == null || inv.getItem(j).getType() == null
+								|| !inv.getItem(j).getItemMeta().hasDisplayName()) {
+							invSlot4 = "false";
+						} else {
+							invSlot4 = inv.getItem(j).getItemMeta().getDisplayName();
+						}
+					}
+
+					if (j == 5) {
+						if (inv.getItem(j) == null || inv.getItem(j).getType() == null
+								|| !inv.getItem(j).getItemMeta().hasDisplayName()) {
+							invSlot5 = "false";
+						} else {
+							invSlot5 = inv.getItem(j).getItemMeta().getDisplayName();
+						}
+					}
+
+					if (j == 6) {
+						if (inv.getItem(j) == null || inv.getItem(j).getType() == null
+								|| !inv.getItem(j).getItemMeta().hasDisplayName()) {
+							invSlot6 = "false";
+						} else {
+							invSlot6 = inv.getItem(j).getItemMeta().getDisplayName();
+						}
+					}
+
+					if (j == 7) {
+						if (inv.getItem(j) == null || inv.getItem(j).getType() == null
+								|| !inv.getItem(j).getItemMeta().hasDisplayName()) {
+							invSlot7 = "false";
+						} else {
+							invSlot7 = inv.getItem(j).getItemMeta().getDisplayName();
+						}
+					}
+
+					if (j == 8) {
+						if (inv.getItem(j) == null || inv.getItem(j).getType() == null
+								|| !inv.getItem(j).getItemMeta().hasDisplayName()) {
+							invSlot8 = "false";
+						} else {
+							invSlot8 = inv.getItem(j).getItemMeta().getDisplayName();
+						}
+					}
+
+					if (j == 9) {
+						if (inv.getItem(j) == null || inv.getItem(j).getType() == null
+								|| !inv.getItem(j).getItemMeta().hasDisplayName()) {
+							invSlot9 = "false";
+						} else {
+							invSlot9 = inv.getItem(j).getItemMeta().getDisplayName();
+						}
+					}
+				}
+
+				if (invSlot1.equals(letterSlot1) && invSlot2.equals(letterSlot2) && invSlot3.equals(letterSlot3)
+						&& invSlot4.equals(letterSlot4) && invSlot5.equals(letterSlot5) && invSlot6.equals(letterSlot6)
+						&& invSlot7.equals(letterSlot7) && invSlot8.equals(letterSlot8)
+						&& invSlot9.equals(letterSlot9)) {
+					recipeMatches = true;
+				}
+
+				matches.clear();
+
+				if (recipeMatches == true) {
+					inv.setResult(new ItemStack(Item));
+
+				} else {
+					inv.setResult(new ItemStack(Material.AIR));
+				}
+
+				Item = null;
 			}
 		}
 	}
